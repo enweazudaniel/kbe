@@ -81,8 +81,11 @@ function buildkernel() {
   echo -e "$THEME$BLD   Compiler  =$WHITE Using $THEME$BLD$build_threads$WHITE threads$RATT"
   echo " "; echo -e "$WHITE$BLD  ------------------------------------"; echo " "
   kbelog -t "BuildKernel: Starting $kernel_name kernel build"
+  export PATH="$kbe_path/resources/clang/bin:${PATH}"
   { { make -j$build_threads \
            ARCH=$kernel_arch \
+           CC=clang \
+           CLANG_TRIPLE=aarch64-linux-gnu- \
   2>&1 1>&3; } | tee $kbe_path/logs/gcc-warnings.txt; } 3>&1;
   echo " ";
   # -----------------------
@@ -171,7 +174,7 @@ function execute_postbuild() {
   for s in $kbe_path/post-build.d/*.sh
   do
     if [ -f $s ]; then
-      sh $s
+      . $s
     fi
   done
 }
